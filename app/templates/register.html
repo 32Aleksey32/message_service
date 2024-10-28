@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+<body>
+  <h1>Регистрация пользователя</h1>
+  <form id="registerForm">
+      <label for="username">Имя пользователя:</label>
+      <input type="text" id="username" name="username" required><br>
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" name="password" required><br>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required><br>
+      <label for="telegram_id">Telegram ID:</label>
+      <input type="text" id="telegram_id" name="telegram_id" required><br><br>
+      <button class="btn" type="submit">Зарегистрироваться</button>
+  </form>
+
+  <div id="errorMessage" style="color: red;"></div>
+  <script>
+    document.getElementById('registerForm').onsubmit = async function(event) {
+      event.preventDefault();
+      const formData = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+        email: document.getElementById('email').value,
+        telegram_id: document.getElementById('telegram_id').value,
+      };
+      const response = await fetch('/users/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {window.location.href = '/'}
+      else {
+        // Если произошла ошибка, выводим сообщение об ошибке
+        const errorData = await response.json();
+        document.getElementById('errorMessage').innerText = errorData.detail;
+      }
+    };
+  </script>
+</body>
+{% endblock %}

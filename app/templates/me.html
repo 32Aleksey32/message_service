@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Информация о текущем пользователе{% endblock %}
+{% block content %}
+<body>
+  <h2>Информация о текущем пользователе</h2>
+  <p>id: {{ user.id }}</p>
+  <p>username: {{ user.username }}</p>
+  <p>email: {{ user.email }}</p>
+  <p>telegram_id: {{ user.telegram_id }}</p>
+</body>
+{% endblock %}
+

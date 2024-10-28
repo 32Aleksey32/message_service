@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<body>
+  <h2>Вход</h2>
+  <form id="loginForm">
+    <label for="username">Имя пользователя:</label>
+    <input type="text" name="username" id="username" required><br><br>
+    <label for="password">Пароль:</label>
+    <input type="password" name="password" id="password" required><br><br>
+    <button class="btn" type="submit">Войти</button>
+  </form>
+
+  <div id="errorMessage" style="color: red;"></div>
+  <script>
+    document.getElementById('loginForm').onsubmit = async function(event) {
+      event.preventDefault();
+      const formData = new URLSearchParams(new FormData(this));
+      const response = await fetch('/users/login', {method: 'POST', body: formData});
+      if (response.ok) {window.location.href = '/'}
+      else {
+        // Если произошла ошибка, выводим сообщение об ошибке
+        const errorData = await response.json();
+        document.getElementById('errorMessage').innerText = errorData.detail;
+      }
+    };
+  </script>
+</body>
+{% endblock %}

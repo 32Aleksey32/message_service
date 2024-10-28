@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Чат с пользователем{% endblock %}
+{% block content %}
+
+<body>
+  <h1>Чат с пользователем</h1>
+
+    <div class="messages" id="messages">
+    </div>
+
+    <form class="form" id="form" autocomplete="off">
+        <input type="text" id="messageInput" placeholder="Введите сообщение..." required/>
+        <button type="submit">Отправить</button>
+    </form>
+
+<script>
+    const receiverName = "{{ receiver_name }}";  // Имя получателя
+    const senderName = "{{ sender_name }}";  // Имя отправителя
+    const wsUrl = `ws://${window.location.host}/ws/${receiverName}`;  // URL для WebSocket
+    const messagesDiv = document.getElementById("messages");
+
+    // Функция для добавления сообщения в чат
+    function addMessage(content, sender, timestamp) {
+        const newMessage = document.createElement("div");
+        newMessage.innerHTML = `<strong>${sender}:</strong> ${content}<span class="timestamp"> ${timestamp}</span>`;
+        messagesDiv.appendChild(newMessage);
+        scrollToBottom();  // Прокрутка вниз
+    }
+
+    // Установка WebSocket соединения
+    const socket = new WebSocket(wsUrl);
+
+    // Обработка отправки сообщений
+    document.getElementById("form").onsubmit = event => {
+        event.preventDefault();
+        const input = document.getElementById("messageInput");
+        if (input.value) {
+            const timestamp = new Date().toLocaleString();
+            const messageData = {
+                sender: senderName,
+                message: input.value,
+                timestamp: timestamp
+            };
+            addMessage(input.value, senderName, timestamp);
+            socket.send(JSON.stringify(messageData));
+            input.value = "";
+        }
+    };
+
+    // Обработка входящих сообщений
+    socket.onmessage = event => {
+        const messageData = JSON.parse(event.data);
+        const sender = messageData.sender;
+        const content = messageData.message;
+        const timestamp = messageData.timestamp;
+        addMessage(content, sender, timestamp);
+    };
+
+    // Функция для загрузки истории сообщений
+    async function loadMessageHistory() {
+        const response = await fetch(`/messages/${receiverName}`, {
+            credentials: 'include'  // Чтобы отправить куки с запросом
+        });
+        const messages = await response.json();
+        messages.forEach(message => {
+            addMessage(message.content, message.sender, message.timestamp);
+        });
+    }
+
+    // Функция для прокрутки окна сообщений вниз
+    function scrollToBottom() {
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    scrollToBottom();
+    loadMessageHistory();
+
+</script>
+</body>
+{% endblock %}

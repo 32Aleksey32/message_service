@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Выбор пользователя для чата{% endblock %}
+{% block content %}
+<body>
+  <h2>Введите имя пользователя для начала чата</h2>
+  <form id="selectUserForm" method="POST" action="/chat">
+    <label for="receiverName">Введите имя пользователя для чата:</label>
+    <input type="text" id="receiverName" name="receiver_name" required/>
+    <button type="submit" >Начать чат</button>
+  </form>
+<script>
+</script>
+</body>
+{% endblock %}
