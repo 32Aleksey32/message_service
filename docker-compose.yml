@@ -41,6 +41,16 @@ services:
     depends_on:
       - redis
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./app/static:/var/html/static/
+    depends_on:
+      - web
+
 volumes:
   postgres_data:
   redis_data:
