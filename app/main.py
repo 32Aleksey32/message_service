@@ -1,4 +1,4 @@
-from fastapi import APIRouter, FastAPI, requests, responses, staticfiles
+from fastapi import APIRouter, FastAPI, Request, responses, staticfiles
 
 from app import templates
 from app.message.handlers import message_router
@@ -10,7 +10,7 @@ app = FastAPI(title='Message Service')
 
 
 @app.get("/", response_class=responses.HTMLResponse)
-async def read_root(request: requests.Request):
+async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 

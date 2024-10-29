@@ -3,7 +3,7 @@
 {% block content %}
 <body>
   <h2>Введите имя пользователя для начала чата</h2>
-  <form id="selectUserForm" method="POST" action="/chat">
+  <form method="post" action="/chat">
     <label for="receiverName">Введите имя пользователя для чата:</label>
     <input type="text" id="receiverName" name="receiver_name" required/>
     <button type="submit" >Начать чат</button>

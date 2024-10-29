@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import WebSocket
 
-from app.redis import redis_create_status, redis_delete_status
+from app.services.redis_service import redis_create_status, redis_delete_status
 
 
 class ConnectionManager:

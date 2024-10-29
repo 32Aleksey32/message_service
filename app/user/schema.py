@@ -16,14 +16,22 @@ class UserRead(BaseModel):
     email: EmailStr
     telegram_id: int
 
+    @classmethod
+    def from_user(cls, user):
+        return cls(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            telegram_id=user.telegram_id
+        )
 
-class UserMe(BaseModel):
-    id: UUID
+
+class LoginResponse(BaseModel):
+    success: bool
+    session_id: str
+    user: UserRead
+
+
+class LoginRequest(BaseModel):
     username: str
-    email: EmailStr
-    telegram_id: int
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
+    password: str

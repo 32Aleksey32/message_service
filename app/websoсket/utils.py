@@ -1,5 +1,5 @@
-from app.celery.tasks import send_telegram_notification
-from app.redis import redis_get_status
+from app.services.celery_tasks import send_telegram_notification
+from app.services.redis_service import redis_get_status
 
 
 async def notify_if_offline(receiver_username: str, sender_username: str, telegram_id: int):

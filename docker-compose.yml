@@ -18,7 +18,7 @@ services:
     command: >
       sh -c "alembic upgrade head &&
       (uvicorn app.main:app --host 0.0.0.0 --port 8000 & 
-      python -m app.telegram_bot)"
+      python -m app.services.telegram_bot)"
     ports:
       - "8000:8000"
     depends_on:
@@ -35,9 +35,9 @@ services:
   celery:
     build:
       dockerfile: app/Dockerfile
-    command: celery -A app.celery.celery_app worker --loglevel=info
+    command: celery -A app.services.celery_tasks.celery_app worker --loglevel=info
     environment:
-      - REDIS_BROKER_URL=redis://redis:6379/0
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       - redis
 

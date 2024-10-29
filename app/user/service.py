@@ -1,4 +1,5 @@
 from typing import Union
+from uuid import UUID
 
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,8 +12,8 @@ from .schema import UserCreate
 
 
 class UserService:
-    def __init__(self, session: AsyncSession):
-        self.repo = UserRepository(session)
+    def __init__(self, db_session: AsyncSession):
+        self.repo = UserRepository(db_session)
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     async def authenticate_user(self, username: str, password: str) -> Union[User, bool]:
@@ -36,11 +37,17 @@ class UserService:
         await self.repo.add_user(new_user)
         return new_user
 
-    async def get_user_by_email(self, email: str) -> User:
-        return await self.repo.get_user_by_email(email)
-
     async def get_user_by_username(self, username: str) -> User:
-        return await self.repo.get_user_by_username(username)
+        user = await self.repo.get_user_by_username(username)
+        if not user:
+            raise CustomError('Пользователя с таким username не существует.', status_code=404)
+        return user
+
+    async def get_user_by_id(self, user_id: UUID) -> User:
+        user = await self.repo.get_user_by_id(user_id)
+        if not user:
+            raise CustomError('Пользователя с таким uuid не существует.', status_code=404)
+        return user
 
     async def check_existing_user(self, email: str, username: str) -> None:
         user = await self.repo.check_existing_user(email, username)

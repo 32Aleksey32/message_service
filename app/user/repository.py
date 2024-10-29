@@ -8,8 +8,8 @@ from .model import User
 
 
 class UserRepository:
-    def __init__(self, session: AsyncSession):
-        self.session = session
+    def __init__(self, db_session: AsyncSession):
+        self.session = db_session
 
     async def add_user(self, user: User) -> None:
         self.session.add(user)

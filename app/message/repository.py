@@ -8,8 +8,8 @@ from .model import Message
 
 
 class MessageRepository:
-    def __init__(self, session: AsyncSession):
-        self.session = session
+    def __init__(self, db_session: AsyncSession):
+        self.session = db_session
 
     async def add_message(self, message: Message) -> None:
         self.session.add(message)

@@ -13,14 +13,19 @@
 </head>
 
 <header>
-    <div class="container">
-        <ul class="nav nav-pills">
-            <li class="nav-item"><a href="/">Главная</a></li>
-            <li class="nav-item"><a href="/users/me">Информация о текущем пользователе</a></li>
-            <li class="nav-item"><a href="/users/login">Войти</a></li>
-            <li class="nav-item"><a href="/users/register">Регистрация</a></li>
-        </ul>
-    </div>
+  <div class="container">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a href="/">Главная</a></li>
+        <li class="nav-item"><a href="/users/me">Информация о текущем пользователе</a></li>
+        <li class="nav-item"><a href="/users/register">Регистрация</a></li>
+        <li class="nav-item"><a href="/users/login">Войти</a></li>
+        <li class="nav-item">
+           <form action="/users/logout" method="post">
+             <button type="submit" class="btn" style="padding: 9.5px;">Выйти</button>
+           </form>
+         </li>
+    </ul>
+  </div>
 </header>
 
 <body>
@@ -33,12 +38,12 @@
 </body>
 
 <footer class="footer bg-dark text-center text-white py-3 fixed-bottom">
-    <div>
-        <p>&copy; 2024 message_service</p>
-        <a href="https://t.me/Aleksey_A_Osipov" target="_blank">
-            <i class="fab fa-telegram"></i> Telegram
-        </a>
-    </div>
+  <div>
+    <p>&copy; 2024 message_service</p>
+    <a href="https://t.me/Aleksey_A_Osipov" target="_blank">
+      <i class="fab fa-telegram"></i> Telegram
+    </a>
+  </div>
 </footer>
 
 </html>

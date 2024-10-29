@@ -1,21 +1,10 @@
 import json
 
-from fastapi import (
-    APIRouter,
-    Cookie,
-    Depends,
-    Form,
-    HTTPException,
-    Request,
-    WebSocket,
-    WebSocketDisconnect,
-    responses,
-    status
-)
+from fastapi import APIRouter, Cookie, Depends, Form, Request, WebSocket, WebSocketDisconnect, responses, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import templates
-from app.auth.auth import get_current_user
+from app.auth import get_current_user
 from app.message.service import MessageService
 from app.session import get_db
 from app.user import UserService
@@ -28,22 +17,19 @@ manager = ConnectionManager()
 websocket_router = APIRouter()
 
 
-@websocket_router.api_route("/chat", methods=["GET", "POST"])
+@websocket_router.api_route("/chat", methods=["GET", "POST"], include_in_schema=False)
 async def chat(
         request: Request,
-        access_token: str = Cookie(None),
+        session_id: str = Cookie(None),
         receiver_name: str = Form(None),
-        session: AsyncSession = Depends(get_db)
+        db_session: AsyncSession = Depends(get_db)
 ):
-    user_service = UserService(session)
-    user = await get_current_user(access_token, session)
+    user_service = UserService(db_session)
+    user = await get_current_user(session_id, db_session)
 
     # Если метод POST, перенаправляем на GET после обработки
     if request.method == "POST":
         receiver = await user_service.get_user_by_username(receiver_name)
-        if not receiver:
-            raise HTTPException(status_code=404, detail="Пользователь с таким username не найден.")
-
         url = f"/chat?receiver_name={receiver.username}"
         return responses.RedirectResponse(url=url, status_code=status.HTTP_303_SEE_OTHER)
 
@@ -61,12 +47,13 @@ async def chat(
 async def websocket_endpoint(
         websocket: WebSocket,
         receiver_name: str,
-        access_token: str = Cookie(None),
-        session: AsyncSession = Depends(get_db)
+        session_id: str = Cookie(None),
+        db_session: AsyncSession = Depends(get_db)
 ):
-    message_service = MessageService(session)
-    user_service = UserService(session)
-    sender = await get_current_user(access_token, session)
+    message_service = MessageService(db_session)
+    user_service = UserService(db_session)
+
+    sender = await get_current_user(session_id, db_session)
     receiver = await user_service.get_user_by_username(receiver_name)
 
     await manager.connect(websocket, sender.id, sender.username)

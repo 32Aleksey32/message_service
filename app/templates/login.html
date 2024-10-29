@@ -12,11 +12,19 @@
   </form>
 
   <div id="errorMessage" style="color: red;"></div>
+
   <script>
     document.getElementById('loginForm').onsubmit = async function(event) {
       event.preventDefault();
-      const formData = new URLSearchParams(new FormData(this));
-      const response = await fetch('/users/login', {method: 'POST', body: formData});
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        // Создаем объект с данными
+        const data = {username: username, password: password};
+        const response = await fetch('/users/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
       if (response.ok) {window.location.href = '/'}
       else {
         // Если произошла ошибка, выводим сообщение об ошибке
@@ -25,5 +33,6 @@
       }
     };
   </script>
+
 </body>
 {% endblock %}
