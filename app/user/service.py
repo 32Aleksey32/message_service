@@ -39,8 +39,6 @@ class UserService:
 
     async def get_user_by_username(self, username: str) -> User:
         user = await self.repo.get_user_by_username(username)
-        if not user:
-            raise CustomError('Пользователя с таким username не существует.', status_code=404)
         return user
 
     async def get_user_by_id(self, user_id: UUID) -> User:

@@ -1,6 +1,17 @@
 import json
 
-from fastapi import APIRouter, Cookie, Depends, Form, Request, WebSocket, WebSocketDisconnect, responses, status
+from fastapi import (
+    APIRouter,
+    Cookie,
+    Depends,
+    Form,
+    HTTPException,
+    Request,
+    WebSocket,
+    WebSocketDisconnect,
+    responses,
+    status
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import templates
@@ -30,6 +41,10 @@ async def chat(
     # Если метод POST, перенаправляем на GET после обработки
     if request.method == "POST":
         receiver = await user_service.get_user_by_username(receiver_name)
+        if not receiver:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь с таким username не найден."
+            )
         url = f"/chat?receiver_name={receiver.username}"
         return responses.RedirectResponse(url=url, status_code=status.HTTP_303_SEE_OTHER)
 
@@ -55,6 +70,8 @@ async def websocket_endpoint(
 
     sender = await get_current_user(session_id, db_session)
     receiver = await user_service.get_user_by_username(receiver_name)
+    if not receiver:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь с таким username не найден.")
 
     await manager.connect(websocket, sender.id, sender.username)
     try:
